@@ -1,25 +1,27 @@
 require("dotenv").config();
 var keys = require("./keys.js");
 var axios = require("axios");
+var Spotify = require('node-spotify-api');
 var spotify = new Spotify(keys.spotify);
 var nodeArgs = process.argv;
 var songName = "";
-var artist = "";
 var movieName = "";
+var artist = "";
 
 //-----------Questions--------------
 
 //concert This Command
-if (process.argv[1] == "concert-this") {
+if (process.argv[2] == "concert-this") {
     //For Loop to search for songs with multiple words in title.
-    for (var i = 2; i < nodeArgs.length; i++) {
-        if (i > 2 && i < nodeArgs.length) {
-            artist = artist + nodeArgs[i];
+    for (var i = 3; i < nodeArgs.length; i++) {
+        if (i >= 3 && i < nodeArgs.length) {
+            artist = artist +  "+" + nodeArgs[i];
         } else {
             artist = ""
         }
     }
     //Query Search
+    console.log("Artist: " + artist);
     var queryUrl = "https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp";
 
     axios.get(queryUrl).then(
@@ -51,13 +53,11 @@ if (process.argv[1] == "concert-this") {
         });
 }
 
-
-
 //spotify This Song Command
-else if (process.argv[1] == "spotify-this-song") {
+else if (process.argv[2] == "spotify-this-song") {
     //For Loop to search for songs with multiple words in title.
-    for (var i = 2; i < nodeArgs.length; i++) {
-        if (i > 2 && i < nodeArgs.length) {
+    for (var i = 3; i < nodeArgs.length; i++) {
+        if (i >= 3 && i < nodeArgs.length) {
             songName = songName + nodeArgs[i];
         } else {
             songName = "The Sign"
@@ -76,9 +76,9 @@ else if (process.argv[1] == "spotify-this-song") {
 }
 
 //movie-this command
-else if (process.argv[1] == "movie-this") {
-    for (var i = 2; i < nodeArgs.length; i++) {
-        if (i > 2 && i < nodeArgs.length) {
+else if (process.argv[2] == "movie-this") {
+    for (var i = 3; i < nodeArgs.length; i++) {
+        if (i >= 3 && i < nodeArgs.length) {
             movieName = movieName + "+" + nodeArgs[i];
         } else {
             movieName += "Mr+Nobody"
@@ -88,6 +88,7 @@ else if (process.argv[1] == "movie-this") {
 
     axios.get(queryUrl).then(
             function (response) {
+                console.log(response);
                 console.log("Title: ");
                 console.log("Release Year: ");
                 console.log("IMDB Rating: ");
@@ -121,6 +122,11 @@ else if (process.argv[1] == "movie-this") {
 }
 
 //do what it says command
+else if (process.argv[2] == "do-what-it-says") {
+    console.log("Do What It Says Activated")
+}
+
+//If none of the commands work...
 else {
     console.log("Please check your command (Index 1)");
 };
