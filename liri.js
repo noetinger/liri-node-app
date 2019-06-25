@@ -3,53 +3,124 @@ var keys = require("./keys.js");
 var axios = require("axios");
 var spotify = new Spotify(keys.spotify);
 var nodeArgs = process.argv;
-var songName = ""
+var songName = "";
+var artist = "";
+var movieName = "";
 
 //-----------Questions--------------
-//Where do I get the axios package?
-//I'm not using the spotify package? just slimply making a key and calling the spotify API? Or do I need the spotify package? How do I download it?
 
-//For Loop to search for songs with multiple words in title.
-for (var i=2; i < nodeArgs.length; i++){
-    if(i > 2 && i < nodeArgs.length){
-        songName = songName + "+" + nodeArgs[i];
+//concert This Command
+if (process.argv[1] == "concert-this") {
+    //For Loop to search for songs with multiple words in title.
+    for (var i = 2; i < nodeArgs.length; i++) {
+        if (i > 2 && i < nodeArgs.length) {
+            artist = artist + nodeArgs[i];
+        } else {
+            artist = ""
+        }
     }
-    else{
-        songName = "The+Sign"
-    }
+    //Query Search
+    var queryUrl = "https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp";
+
+    axios.get(queryUrl).then(
+            function (response) {
+                console.log(response);
+                console.log("Name of Venue: ");
+                console.log("Venue Location: ");
+                console.log("Date of the Event: ");
+            })
+        .catch(function (error) {
+            if (error.response) {
+                // The request was made and the server responded with a status code
+                // that falls out of the range of 2xx
+                console.log("---------------Data---------------");
+                console.log(error.response.data);
+                console.log("---------------Status---------------");
+                console.log(error.response.status);
+                console.log("---------------Status---------------");
+                console.log(error.response.headers);
+            } else if (error.request) {
+                // The request was made but no response was received
+                // `error.request` is an object that comes back with details pertaining to the error that occurred.
+                console.log(error.request);
+            } else {
+                // Something happened in setting up the request that triggered an Error
+                console.log("Error", error.message);
+            }
+            console.log(error.config);
+        });
 }
 
-var queryURL = "first part" + songName + "secondPart";
 
-axios.get(queryURL).then(
-    function(response){
-        console.log(response);
+
+//spotify This Song Command
+else if (process.argv[1] == "spotify-this-song") {
+    //For Loop to search for songs with multiple words in title.
+    for (var i = 2; i < nodeArgs.length; i++) {
+        if (i > 2 && i < nodeArgs.length) {
+            songName = songName + nodeArgs[i];
+        } else {
+            songName = "The Sign"
+        }
     }
-)
-//Error
-.catch(function(error) {
-    if (error.response) {
-      // The request was made and the server responded with a status code
-      // that falls out of the range of 2xx
-      console.log("---------------Data---------------");
-      console.log(error.response.data);
-      console.log("---------------Status---------------");
-      console.log(error.response.status);
-      console.log("---------------Status---------------");
-      console.log(error.response.headers);
-    } else if (error.request) {
-      // The request was made but no response was received
-      // `error.request` is an object that comes back with details pertaining to the error that occurred.
-      console.log(error.request);
-    } else {
-      // Something happened in setting up the request that triggered an Error
-      console.log("Error", error.message);
+    spotify.search({
+            type: 'track',
+            query: songName
+        })
+        .then(function (response) {
+            console.log(response);
+        })
+        .catch(function (err) {
+            console.log(err);
+        });
+}
+
+//movie-this command
+else if (process.argv[1] == "movie-this") {
+    for (var i = 2; i < nodeArgs.length; i++) {
+        if (i > 2 && i < nodeArgs.length) {
+            movieName = movieName + "+" + nodeArgs[i];
+        } else {
+            movieName += "Mr+Nobody"
+        }
     }
-    console.log(error.config);
-  });
+    var queryUrl = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=trilogy";
 
+    axios.get(queryUrl).then(
+            function (response) {
+                console.log("Title: ");
+                console.log("Release Year: ");
+                console.log("IMDB Rating: ");
+                console.log("Rotten Tomatos Rating: ");
+                console.log("Country Produced: ");
+                console.log("Language: ");
+                console.log("Plot: ");
+                console.log("Actors: ");
+            })
+        .catch(function (error) {
+            if (error.response) {
+                // The request was made and the server responded with a status code
+                // that falls out of the range of 2xx
+                console.log("---------------Data---------------");
+                console.log(error.response.data);
+                console.log("---------------Status---------------");
+                console.log(error.response.status);
+                console.log("---------------Status---------------");
+                console.log(error.response.headers);
+            } else if (error.request) {
+                // The request was made but no response was received
+                // `error.request` is an object that comes back with details pertaining to the error that occurred.
+                console.log(error.request);
+            } else {
+                // Something happened in setting up the request that triggered an Error
+                console.log("Error", error.message);
+            }
+            console.log(error.config);
+        });
 
+}
 
-
-
-//command to use: node liri.js spotify-this-song '<song name here>'
+//do what it says command
+else {
+    console.log("Please check your command (Index 1)");
+};
