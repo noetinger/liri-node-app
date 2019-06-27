@@ -12,7 +12,8 @@ var songName = "";
 var movieName = "";
 
 //Tasks to complete:
-//Moment.js for date on concert-this
+    //Moment.js for date on concert-this
+    //Update Read-Me
 
 
 //Multiple words
@@ -112,7 +113,7 @@ function movieThis(title) {
 
     axios.get(queryUrl).then(
             function (response) {
-                console.log(response);
+                //console.log(response);
                 console.log("Title: " + response.data.Title);
                 console.log("Release Year: " + response.data.Year);
                 console.log("IMDB Rating: " + response.data.imdbRating);
@@ -145,8 +146,6 @@ function movieThis(title) {
 
 }
 
-runTask()
-
 //do what it says command
 function readFile() {
     fs.readFile("random.txt", "utf8", function (error, data) {
@@ -161,7 +160,15 @@ function readFile() {
 
         if (dataArr[0] === "movie-this") {
             movieThis(dataArr[1])
+        } else if (dataArr[0] === "spotify-this") {
+            spotifyThis(dataArr[1])
+        } else if (dataArr[0] === "concert-this") {
+            concertThis(dataArr[1])
+        } else {
+            console.log("Check your txt file for errors.")
         }
 
     })
 }
+
+runTask()
