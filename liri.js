@@ -2,34 +2,63 @@ require("dotenv").config();
 var keys = require("./keys.js");
 var axios = require("axios");
 var Spotify = require('node-spotify-api');
+var fs = require("fs");
 var spotify = new Spotify(keys.spotify);
-var nodeArgs = process.argv;
+var command = process.argv[2];
+var nodeArgv = process.argv;
+
+var artist = "";
 var songName = "";
 var movieName = "";
-var artist = "";
 
-//-----------Questions--------------
+//Tasks to complete:
+//Moment.js for date on concert-this
+
+
+//Multiple words
+var title = "";
+for (var i = 3; i < nodeArgv.length; i++) {
+    if (i > 3 && i < nodeArgv.length) {
+        title = title + " " + nodeArgv[i];
+    } else {
+        title = title + nodeArgv[i];
+    }
+};
+
+function runTask() {
+    switch (command) {
+        case 'concert-this':
+            concertThis(title);
+            break;
+        case 'spotify-this':
+            if (title === "") {
+                title = "Miss Grace";
+            }
+            spotifyThis(title);
+            break;
+        case 'movie-this':
+            movieThis(title);
+            break;
+        case 'do-what-it-says':
+            readFile();
+            break;
+    }
+}
 
 //concert This Command
-if (process.argv[2] == "concert-this") {
-    //For Loop to search for songs with multiple words in title.
-    for (var i = 3; i < nodeArgs.length; i++) {
-        if (i >= 3 && i < nodeArgs.length) {
-            artist = artist +  "+" + nodeArgs[i];
-        } else {
-            artist = ""
-        }
-    }
+function concertThis(title) {
+    artist = title;
+
     //Query Search
     console.log("Artist: " + artist);
     var queryUrl = "https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp";
 
     axios.get(queryUrl).then(
             function (response) {
-                console.log(response);
-                console.log("Name of Venue: ");
-                console.log("Venue Location: ");
-                console.log("Date of the Event: ");
+                //console.log(response.data);
+                console.log("Name of Venue: " + response.data[i].venue.name);
+                console.log("Venue Location: " + response.data[i].venue.city);
+                console.log("Date of the Event: " + response.data[i].datetime);
             })
         .catch(function (error) {
             if (error.response) {
@@ -54,49 +83,44 @@ if (process.argv[2] == "concert-this") {
 }
 
 //spotify This Song Command
-else if (process.argv[2] == "spotify-this-song") {
-    //For Loop to search for songs with multiple words in title.
-    for (var i = 3; i < nodeArgs.length; i++) {
-        if (i >= 3 && i < nodeArgs.length) {
-            songName = songName + nodeArgs[i];
-        } else {
-            songName = "The Sign"
-        }
-    }
+function spotifyThis(title) {
+    songName = title;
+
     spotify.search({
-            type: 'track',
-            query: songName
-        })
-        .then(function (response) {
-            console.log(response);
-        })
-        .catch(function (err) {
-            console.log(err);
-        });
+        type: 'track',
+        query: songName
+    }, function (err, data) {
+        if (err) {
+            return console.log('Error occured: ', err)
+        };
+        var results = data.tracks.items
+        for (i = 0; i < results.length; i++) {
+            console.log("Artist:" + results[i].artists[0].name);
+            console.log("Song's Name: " + results[i].name);
+            console.log("Spotify Song Link: " + results[i].external_urls.spotify)
+            console.log("Album Name: " + results[i].album.name);
+        }
+    })
 }
 
 //movie-this command
-else if (process.argv[2] == "movie-this") {
-    for (var i = 3; i < nodeArgs.length; i++) {
-        if (i >= 3 && i < nodeArgs.length) {
-            movieName = movieName + "+" + nodeArgs[i];
-        } else {
-            movieName += "Mr+Nobody"
-        }
-    }
+function movieThis(title) {
+    movieName = title;
+    console.log("movie name: " + movieName)
+
     var queryUrl = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=trilogy";
 
     axios.get(queryUrl).then(
             function (response) {
                 console.log(response);
-                console.log("Title: ");
-                console.log("Release Year: ");
-                console.log("IMDB Rating: ");
-                console.log("Rotten Tomatos Rating: ");
-                console.log("Country Produced: ");
-                console.log("Language: ");
-                console.log("Plot: ");
-                console.log("Actors: ");
+                console.log("Title: " + response.data.Title);
+                console.log("Release Year: " + response.data.Year);
+                console.log("IMDB Rating: " + response.data.imdbRating);
+                //              console.log("Rotten Tomatos Rating: " + response.data.tomatoRating );
+                console.log("Country Produced: " + response.data.Country);
+                console.log("Language: " + response.data.Language);
+                console.log("Plot: " + response.data.Plot);
+                console.log("Actors: " + response.data.Actors);
             })
         .catch(function (error) {
             if (error.response) {
@@ -121,12 +145,23 @@ else if (process.argv[2] == "movie-this") {
 
 }
 
-//do what it says command
-else if (process.argv[2] == "do-what-it-says") {
-    console.log("Do What It Says Activated")
-}
+runTask()
 
-//If none of the commands work...
-else {
-    console.log("Please check your command (Index 1)");
-};
+//do what it says command
+function readFile() {
+    fs.readFile("random.txt", "utf8", function (error, data) {
+        if (error) {
+            return console.log(error);
+        }
+        console.log(data);
+
+        var dataArr = data.split(",");
+
+        console.log(dataArr);
+
+        if (dataArr[0] === "movie-this") {
+            movieThis(dataArr[1])
+        }
+
+    })
+}
