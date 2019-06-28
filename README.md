@@ -46,6 +46,6 @@ The challenge was to use Node JS to create a LIRI bot, similar iPhone's SIRI, bu
   * Takes the text from random.txt and runs the song through spotify-this-song command
 
 ## Syntax Used
--JavaScript
--Node.js
--Moment.js
+- JavaScript
+- Node.js
+- Moment.js
