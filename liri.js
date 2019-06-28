@@ -3,6 +3,7 @@ var keys = require("./keys.js");
 var axios = require("axios");
 var Spotify = require('node-spotify-api');
 var fs = require("fs");
+var moment = require("moment");
 var spotify = new Spotify(keys.spotify);
 var command = process.argv[2];
 var nodeArgv = process.argv;
@@ -12,7 +13,6 @@ var songName = "";
 var movieName = "";
 
 //Tasks to complete:
-    //Moment.js for date on concert-this
     //Update Read-Me
 
 
@@ -59,7 +59,8 @@ function concertThis(title) {
                 //console.log(response.data);
                 console.log("Name of Venue: " + response.data[i].venue.name);
                 console.log("Venue Location: " + response.data[i].venue.city);
-                console.log("Date of the Event: " + response.data[i].datetime);
+                var date = response.data[i];
+                console.log("Date of the Event: " + moment(date).format('L'));
             })
         .catch(function (error) {
             if (error.response) {
