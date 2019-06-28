@@ -1,5 +1,7 @@
 # liri-node-app
 
+Screenshots are located here: https://github.com/noetinger/liri-node-app/tree/master/screenShots
+
 The challenge was to use Node JS to create a LIRI bot, similar iPhone's SIRI, but takes in command through Language instead of Speech. LIRI is a command line node app that takes in parameters and returns data based on one of four commands:
 
   * `concert-this`
