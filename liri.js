@@ -13,7 +13,7 @@ var songName = "";
 var movieName = "";
 
 //Tasks to complete:
-    //Update Read-Me
+//Update Read-Me
 
 
 //Multiple words
@@ -31,13 +31,16 @@ function runTask() {
         case 'concert-this':
             concertThis(title);
             break;
-        case 'spotify-this':
+        case 'spotify-this-song':
             if (title === "") {
-                title = "Miss Grace";
+                title = "Mr. Brightside";
             }
             spotifyThis(title);
             break;
         case 'movie-this':
+            if (title === "") {
+                title = "Sandlot";
+            }
             movieThis(title);
             break;
         case 'do-what-it-says':
@@ -94,7 +97,7 @@ function spotifyThis(title) {
     }, function (err, data) {
         if (err) {
             return console.log('Error occured: ', err)
-        };
+        }
         var results = data.tracks.items
         for (i = 0; i < results.length; i++) {
             console.log("Artist:" + results[i].artists[0].name);
@@ -103,7 +106,7 @@ function spotifyThis(title) {
             console.log("Album Name: " + results[i].album.name);
         }
     })
-}
+};
 
 //movie-this command
 function movieThis(title) {
